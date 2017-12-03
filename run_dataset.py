@@ -1,6 +1,6 @@
 import tensorflow as tf
 import scipy.misc
-import model
+from ConvModel import ConvModel
 import cv2
 from subprocess import call
 
@@ -11,10 +11,12 @@ saver.restore(sess, "save/model.ckpt")
 img = cv2.imread('steering_wheel_image.jpg',0)
 rows,cols = img.shape
 
+model = ConvModel(drop_out=False)
+
 smoothed_angle = 0
 
 i = 0
-while(cv2.waitKey(10) != ord('q')):
+while i < 45406:
     full_image = scipy.misc.imread("driving_dataset/" + str(i) + ".jpg", mode="RGB")
     image = scipy.misc.imresize(full_image[-150:], [66, 200]) / 255.0
     degrees = model.y.eval(feed_dict={model.x: [image], model.keep_prob: 1.0})[0][0] * 180.0 / scipy.pi

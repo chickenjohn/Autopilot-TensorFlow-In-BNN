@@ -4,6 +4,7 @@ from tensorflow.core.protobuf import saver_pb2
 import driving_data
 from ConvModel import ConvModel
 import argparse
+import numpy as np
 
 LOGDIR = './save'
 LEARNING_RATE = 1e-4
@@ -23,12 +24,12 @@ def main():
   args = get_arguments()
 
   sess = tf.InteractiveSession()
-  model = ConvModel(drop_out=True)
+  model = ConvModel(drop_out=args.drop_out, relu=True)
   L2NormConst = 0.001
 
   train_vars = tf.trainable_variables()
 
-  loss = tf.sqrt(tf.reduce_mean(tf.square(tf.subtract(model.y_, model.y)))) + \
+  loss = tf.reduce_mean(tf.square(tf.subtract(model.y_, model.y))) + \
       tf.add_n([tf.nn.l2_loss(v) for v in train_vars]) * L2NormConst
   train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
   sess.run(tf.global_variables_initializer())
@@ -46,6 +47,10 @@ def main():
 
   epochs = 30
   batch_size = 100
+
+  num_of_parameters = np.sum([np.product([xi.value for xi in x.get_shape()]) for x in tf.global_variables()])
+  print("Number of parameters: %d" % num_of_parameters)
+
 
   # train over the dataset about 30 times
   for epoch in range(epochs):
