@@ -6,7 +6,7 @@ import math
 from numpy import genfromtxt
 
 sess = tf.InteractiveSession()
-model = ConvModel(drop_out=False)
+model = ConvModel(drop_out=True, relu=False, is_training=False)
 saver = tf.train.Saver()
 saver.restore(sess, "save/model.ckpt")
 
@@ -25,7 +25,7 @@ while i < 45406:
     full_image = scipy.misc.imread("dataset/" + str(i) + ".jpg", mode="RGB")
     image = scipy.misc.imresize(full_image[-150:], [66, 200]) / 255.0
     degrees = model.y.eval(feed_dict={model.x: [image], model.keep_prob: 1.0})[0][0] * 180.0 / scipy.pi
-    degree_delta = math.fabs(degrees - float(data['angle'][i]))
+    degree_delta = math.fabs(degrees - float(data['angle'][i]) * 100 / scipy.pi)
     if degree_delta>10.0 :
         intervention += 1.0
     print("Predicted steering angle: " + str(degrees) + " degrees")
@@ -33,4 +33,4 @@ while i < 45406:
     #and the predicted angle
     i += 1
 
-print("number of intervention: " + str(intervention) + " and autonomy: " + str(1-intervention/40506))
+print("number of intervention: " + str(intervention) + " and autonomy: " + str(1-intervention/45406))

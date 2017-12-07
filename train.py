@@ -24,7 +24,7 @@ def main():
   args = get_arguments()
 
   sess = tf.InteractiveSession()
-  model = ConvModel(drop_out=args.drop_out, relu=True)
+  model = ConvModel(drop_out=args.drop_out, relu=True, is_training=True)
   L2NormConst = 0.001
 
   train_vars = tf.trainable_variables()
@@ -45,7 +45,7 @@ def main():
   logs_path = './logs'
   summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
 
-  epochs = 30
+  epochs = 30 
   batch_size = 100
 
   num_of_parameters = np.sum([np.product([xi.value for xi in x.get_shape()]) for x in tf.global_variables()])
