@@ -12,7 +12,7 @@ saver.restore(sess, "save/model.ckpt")
 
 smoothed_angle = 0
 
-filename = 'dataset/data.txt'
+filename = 'driving_dataset/data.txt'
 
 data=genfromtxt(filename, delimiter=' ', names=['file', 'angle'])
 
